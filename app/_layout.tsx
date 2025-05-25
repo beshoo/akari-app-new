@@ -46,6 +46,17 @@ const theme = {
   },
 };
 
+const fabTheme = {
+  ...theme,
+  fonts: {
+    ...theme.fonts,
+    labelMedium: {
+      ...theme.fonts.labelMedium,
+      fontSize: 16, // Increased font size for FAB label
+    },
+  },
+};
+
 const { NotificationsProvider, useNotifications, ...events } = createNotifications({
   isNotch: true,
   defaultStylesSettings: {
@@ -491,6 +502,7 @@ export default function RootLayout() {
                 icon={fabOpen ? 'close' : 'plus'}
                 color="#FFF"
                 label={'إضافة عرض'}
+                theme={{ fonts: { ...theme.fonts, labelLarge: { ...theme.fonts.labelLarge, fontSize: 16 } } }}
                 rippleColor={'#00000060'}
                 actions={[
                   {
@@ -502,8 +514,8 @@ export default function RootLayout() {
                     color: 'white', // Optional: Style the icon color
                   },
                   {
-                    icon: 'home-outline', // Or choose another appropriate icon
-                    label: 'إضافة سهم تنظيمي',
+                    icon: 'trending-up', // Or choose another appropriate icon
+                    label: 'إضافة طلب تنظيمي',
                     onPress: () => router.push('/(create)/shares'),
                     style: { backgroundColor: '#a47764' }, // Optional: Style the action button
                     labelTextColor: 'white', // Optional: Style the label
@@ -512,7 +524,7 @@ export default function RootLayout() {
                 ]}
                 onStateChange={onStateChange}
                 fabStyle={{
-                  backgroundColor: '#a47764',
+                  backgroundColor: '#8E6756',
                   marginBottom: (insets.bottom || 0) + 90,
                   marginRight: I18nManager.isRTL ? undefined : 16,
                   marginLeft: I18nManager.isRTL ? 16 : undefined,

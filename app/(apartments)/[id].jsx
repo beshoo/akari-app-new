@@ -11,6 +11,7 @@ import {
   I18nManager,
   Alert,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUnitsStore } from '../../store/units.store';
@@ -79,6 +80,7 @@ const UnitDetails = ({
   onLikeLongPress,
   onReactionSelect,
   onOpenReactionsModal,
+  onDismissReactions,
 }) => {
   const user = getSecureStoreNoAsync('user');
 
@@ -119,21 +121,35 @@ const UnitDetails = ({
         )}
 
         {showReactions && (
-          <Animated.View
-            className="absolute bottom-12 left-2 z-20 flex-row items-center gap-2 rounded-full border border-gray-300 bg-white p-1 shadow-lg drop-shadow-sm"
-            style={{
-              elevation: 5,
-              transform: [{ translateX: I18nManager.isRTL ? -10 : 10 }],
-              bottom: 50, // Adjust as needed
-            }}>
-            {availableReactions.map((reaction) => (
-              <EmojiButton
-                key={reaction.value}
-                emoji={reaction.icon}
-                onPress={() => onReactionSelect(reaction.value)}
-              />
-            ))}
-          </Animated.View>
+          <>
+            {/* Overlay to dismiss reactions when touching outside */}
+            <Pressable
+              className="absolute inset-0 z-10"
+              style={{
+                position: 'absolute',
+                top: -1000,
+                bottom: -1000,
+                left: -1000,
+                right: -1000,
+              }}
+              onPress={onDismissReactions}
+            />
+            <Animated.View
+              className="absolute bottom-12 left-2 z-20 flex-row items-center gap-2 rounded-full border border-gray-300 bg-white p-1 shadow-lg drop-shadow-sm"
+              style={{
+                elevation: 5,
+                transform: [{ translateX: I18nManager.isRTL ? -10 : 10 }],
+                bottom: 50, // Adjust as needed
+              }}>
+              {availableReactions.map((reaction) => (
+                <EmojiButton
+                  key={reaction.value}
+                  emoji={reaction.icon}
+                  onPress={() => onReactionSelect(reaction.value)}
+                />
+              ))}
+            </Animated.View>
+          </>
         )}
 
         <TouchableOpacity
@@ -171,12 +187,12 @@ const UnitDetails = ({
           {item?.transaction_type === 'buy' ? (
             <Text className={'font-pregular text-base text-zinc-500'}>
               نرغب بشراء عقار في {item?.sector?.code?.view_code} بكمية {item?.equity} حصة سهمية بسعر{' '}
-              {item?.price} في منطقة {item?.region?.name}
+              {item?.price} ل.س  في منطقة {item?.region?.name}
             </Text>
           ) : (
             <Text className={'font-pregular text-base text-zinc-500'}>
               نرغب ببيع عقار في {item?.sector?.code?.view_code} بكمية {item?.equity} حصة سهمية بسعر{' '}
-              {item?.price} في منطقة {item?.region?.name}
+              {item?.price} ل.س  في منطقة {item?.region?.name}
             </Text>
           )}
         </Text>
@@ -187,7 +203,7 @@ const UnitDetails = ({
           <Text className="font-pmedium text-base text-zinc-600">سعر العقار</Text>
           <Text
             className={`font-pregular text-sm text-zinc-600 ${I18nManager.isRTL ? 'text-left' : 'text-right'}`}>
-            {item?.price}
+            {item?.price} ل.س 
           </Text>
         </View>
         <View className="flex-1 rounded-lg border border-toast-100 p-4">
@@ -657,24 +673,24 @@ const ApartmentDetails = () => {
                   {apartmentDetailsResponse?.region?.name} -{' '}
                   {apartmentDetailsResponse?.post_type == 'share' ? 'أسهم تنظيمية' : 'عقارات'}
                 </Text>
+                <Text className="font-pregular text-sm text-zinc-600">الرقم المرجعي : {apartmentDetailsResponse?.id}</Text>
               </View>
-              {(user?.privilege == 'admin' ||
-                user?.user_id == apartmentDetailsResponse?.user?.id) && (
-                <View className="mt-2 px-4">
-                  {apartmentDetailsResponse?.approve == 0 && (
-                    <CustomLinear
-                      title={apartmentDetailsResponse?.approve == 1 ? 'متاح' : 'قيد المراجعة'}
-                      colors={['#e3a001', '#b87005', '#95560b', '#7a460d', '#7a460d']}
-                      positionOfGradient="leftToRight"
-                      textStyles="text-white !text-xs mt-1"
-                      buttonStyles="rounded-lg py-1 px-8"
-                    />
-                  )}
-                </View>
-              )}
             </View>
             <ScrollView className="flex-1">
-              <View>
+              <View className="flex-1 relative">
+                {(user?.privilege == 'admin' || user?.user_id == apartmentDetailsResponse?.user?.id) && (
+                  <View className="absolute z-10" style={{ top: 25, left: 20 }}>
+                    {apartmentDetailsResponse?.approve == 0 && (
+                      <CustomLinear
+                        title={apartmentDetailsResponse?.approve == 1 ? 'متاح' : 'قيد المراجعة'}
+                        colors={['#e3a001', '#b87005', '#95560b', '#7a460d', '#7a460d']}
+                        positionOfGradient="leftToRight"
+                        textStyles="text-white !text-xs mt-1"
+                        buttonStyles="rounded-lg py-1 px-8"
+                      />
+                    )}
+                  </View>
+                )}
                 {apartmentDetailsResponse && (
                   <CustomImageSlider
                     images={apartmentDetailsResponse?.photos}
@@ -691,6 +707,7 @@ const ApartmentDetails = () => {
                     onLikeLongPress={handleLikeLongPress}
                     onReactionSelect={handleReactionSelect}
                     onOpenReactionsModal={handleOpenReactionsModal}
+                    onDismissReactions={() => setShowReactions(false)}
                   />
                 </View>
               </View>

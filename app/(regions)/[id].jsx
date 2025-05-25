@@ -118,7 +118,7 @@ const RegionWithId = () => {
             containerStyles={'mt-3'}
             hasGradient={true}
             colors={['#633e3d', '#774b46', '#8d5e52', '#a47764', '#bda28c']}
-            title={tabId == 'shares' ? 'إضافة سهم تنظيمي' : 'إضافة عقار'}
+            title={tabId == 'shares' ? 'إضافة طلب تنظيمي' : 'إضافة عقار'}
             positionOfGradient={'leftToRight'}
             textStyles={'text-white text-sm'}
             handleButtonPress={() => {
