@@ -323,7 +323,7 @@ const UnitApartmentCard = ({ item }) => {
                   tintColor={'#FFF'}
                   resizeMode="contain"
                 />
-                <Text className="font-pmedium text-sm text-white">سعر العقار : {item.price} ل.س</Text>
+                <Text className="font-pmedium text-sm text-white">سعر العقار : {item.price}</Text>
               </View>
               <View className="flex-row items-center gap-1">
                 <Image
